@@ -237,7 +237,7 @@ public class UserController {
 		}
 		User user = userService.findOneById(info.getUser());
 		if(user == null) {
-			return new ResponseEntity<>(new MessageDTO("User Not Found"),HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(new MessageDTO("User Not Found" + info.getUser() ),HttpStatus.NOT_FOUND);
 		}
 		Permission permission = permissionService.findOneById(info.getPermission());
 		if(permission == null) {
