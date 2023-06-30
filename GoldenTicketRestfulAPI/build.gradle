@@ -36,7 +36,7 @@ dependencies {
 jar{
 	enabled = false
 	manifest{
-		attributes 'Main-Class': 'package com.group15.goldenticket.GoldenTicketApplication'
+		attributes 'Main-Class': 'com.group15.goldenticket.GoldenTicketApplication'
 	}
 }
 
