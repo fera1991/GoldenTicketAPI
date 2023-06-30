@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginDTO {
-	
+	@NotEmpty
 	private String identifier;
 	
-	
+	@NotEmpty
 	private String password;
 
 }
