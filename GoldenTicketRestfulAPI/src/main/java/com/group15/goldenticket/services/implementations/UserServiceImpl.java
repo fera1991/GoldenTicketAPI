@@ -7,14 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.group15.goldenticket.models.dtos.SaveUserDTO;
 import com.group15.goldenticket.models.dtos.UpdateUserDTO;
+import com.group15.goldenticket.models.entities.Token;
 import com.group15.goldenticket.models.entities.User;
+import com.group15.goldenticket.repositories.TokenRepository;
 import com.group15.goldenticket.repositories.UserRepository;
 import com.group15.goldenticket.services.UserService;
+import com.group15.goldenticket.utils.JWTTools;
+
 
 import jakarta.transaction.Transactional;
 
@@ -24,7 +29,13 @@ public class UserServiceImpl implements UserService{
 	UserRepository userRepository;
 	
 	@Autowired
+	private JWTTools jwtTools;
+	
+	@Autowired
 	public PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private TokenRepository tokenRepository;
 
 	@Override
 	@Transactional(rollbackOn = Exception.class)
@@ -65,8 +76,7 @@ public class UserServiceImpl implements UserService{
 				info.getName(),
 				info.getUsername(),
 				info.getEmail(),
-				passwordEncoder.encode(info.getPassword()),
-				true
+				passwordEncoder.encode(info.getPassword())
 				);
 		userRepository.save(user);
 	}
@@ -82,7 +92,7 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public void deactivateUser(User user) throws Exception {
 		User updateUser = user;
-		updateUser.setStatus(false);
+		updateUser.setActive(false);
 		userRepository.save(updateUser);
 	}
 
@@ -115,4 +125,59 @@ public class UserServiceImpl implements UserService{
 	public List<User> findAll() {
 		return userRepository.findAll();
 	}
+
+	@Override
+	@Transactional(rollbackOn = Exception.class)
+	public Token registerToken(User user) throws Exception {
+		cleanTokens(user);
+		
+		String tokenString = jwtTools.generateToken(user);
+		Token token = new Token(tokenString, user);
+		
+		tokenRepository.save(token);
+		
+		return token;
+	}
+
+	@Override
+	public Boolean isTokenValid(User user, String token) {
+		try {
+			cleanTokens(user);
+			List<Token> tokens = tokenRepository.findByUserAndActive(user, true);
+			
+			tokens.stream()
+				.filter(tk -> tk.getContent().equals(token))
+				.findAny()
+				.orElseThrow(() -> new Exception());
+			
+			return true;
+		} catch (Exception e) {
+			return false;
+		}		
+	}
+
+	@Override
+	@Transactional(rollbackOn = Exception.class)
+	public void cleanTokens(User user) throws Exception {
+		List<Token> tokens = tokenRepository.findByUserAndActive(user, true);
+		
+		tokens.forEach(token -> {
+			if(!jwtTools.verifyToken(token.getContent())) {
+				token.setActive(false);
+				tokenRepository.save(token);
+			}
+		});
+		
+	}
+
+	@Override
+	public User findUserAuthenticated() {
+		String username = SecurityContextHolder
+			.getContext()
+			.getAuthentication()
+			.getName();
+		
+		return userRepository.findOneByUsernameOrEmail(username, username);
+	}
 }
+	

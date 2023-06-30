@@ -1,6 +1,6 @@
 package com.group15.goldenticket.models.dtos;
 
-import jakarta.validation.constraints.NotEmpty;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserPermissionDTO {
-	@NotEmpty
     @NotNull(message = "user ID is required")
     private String user;
     

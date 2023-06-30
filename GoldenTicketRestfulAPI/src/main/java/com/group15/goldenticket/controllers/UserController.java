@@ -1,5 +1,6 @@
 package com.group15.goldenticket.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -19,26 +21,36 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.group15.goldenticket.models.dtos.UserPermissionDTO;
 import com.group15.goldenticket.models.entities.Permission;
+import com.group15.goldenticket.models.entities.Ticket;
 import com.group15.goldenticket.models.entities.User;
 import com.group15.goldenticket.models.entities.UserXPermission;
 import com.group15.goldenticket.models.dtos.ChangePasswordDTO;
 import com.group15.goldenticket.models.dtos.MessageDTO;
 import com.group15.goldenticket.models.dtos.PageDTO;
 import com.group15.goldenticket.models.dtos.SaveUserDTO;
+import com.group15.goldenticket.models.dtos.ShowTicketDTO;
+import com.group15.goldenticket.models.dtos.ShowUserDTO;
 import com.group15.goldenticket.models.dtos.UpdateUserDTO;
 import com.group15.goldenticket.services.PermissionService;
 import com.group15.goldenticket.services.UserService;
 import com.group15.goldenticket.services.UserXPermissionService;
+import com.group15.goldenticket.utils.JWTTools;
 import com.group15.goldenticket.utils.RequestErrorHandler;
 
+
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 
 @RestController
 @RequestMapping("/user")
+@CrossOrigin("*")
 public class UserController {
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private JWTTools jwtTools;
 	
 	@Autowired
 	private PermissionService permissionService;
@@ -112,13 +124,30 @@ public class UserController {
 		return new ResponseEntity<>(user,HttpStatus.OK);
 	}
 	
-	@GetMapping("/ticket/{id}")
-	public ResponseEntity<?> findAllTicketUser(@PathVariable(name = "id") String code) {
-		User user = userService.findOneById(code);
+	@GetMapping("/ticket")
+	public ResponseEntity<?> findAllTicketUser(HttpServletRequest request) {
+		String tokenHeader = request.getHeader("Authorization");
+    	String token = tokenHeader.substring(7);
+    	
+    	
+		User user = userService.findOneByIdentifier(jwtTools.getUsernameFrom(token));
 		if(user == null) {
 			return new ResponseEntity<>(new MessageDTO("User Not Found"),HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(user.getTickets(),HttpStatus.OK);
+		
+		List<ShowTicketDTO> tickets = new ArrayList<>();
+		for (Ticket data : user.getTickets()) {
+			ShowTicketDTO ticket = new ShowTicketDTO(
+					data.getCode(),
+					new ShowUserDTO(data.getUser().getCode(),data.getUser().getUsername(),data.getUser().getEmail()),
+					data.getLocality(),
+					data.getPurchaseDate()
+					);
+			tickets.add(ticket);
+        }
+        
+		
+		return new ResponseEntity<>(tickets,HttpStatus.OK);
 	}
 	
 	@PatchMapping("/update")
@@ -237,7 +266,7 @@ public class UserController {
 		}
 		User user = userService.findOneById(info.getUser());
 		if(user == null) {
-			return new ResponseEntity<>(new MessageDTO("User Not Found" + info.getUser() ),HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(new MessageDTO("User Not Found"),HttpStatus.NOT_FOUND);
 		}
 		Permission permission = permissionService.findOneById(info.getPermission());
 		if(permission == null) {

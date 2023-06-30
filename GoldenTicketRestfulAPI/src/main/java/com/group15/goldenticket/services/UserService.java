@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 
 import com.group15.goldenticket.models.dtos.SaveUserDTO;
 import com.group15.goldenticket.models.dtos.UpdateUserDTO;
+import com.group15.goldenticket.models.entities.Token;
 import com.group15.goldenticket.models.entities.User;
 
 
@@ -25,5 +26,13 @@ public interface  UserService {
 	Boolean comparePassword(String toCompare, String current);
 	User findOneByIdentifier(String identifier);
 	User findOneByUsernameOrEmail(String username, String email);
+	
+	//Token management
+	Token registerToken(User user) throws Exception;
+	Boolean isTokenValid(User user, String token);
+	void cleanTokens(User user) throws Exception;
+	
+	//Find User authenticated
+	User findUserAuthenticated();
 	
 }
