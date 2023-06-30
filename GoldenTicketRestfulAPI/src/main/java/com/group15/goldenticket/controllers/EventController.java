@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -85,7 +86,7 @@ public class EventController {
 	}
 	
 	@PostMapping("/")
-	public ResponseEntity<?> saveEvent(@RequestBody @Valid SaveEventDTO info, BindingResult validations){
+	public ResponseEntity<?> saveEvent(@ModelAttribute @Valid SaveEventDTO info, BindingResult validations){
 		if(validations.hasErrors()) {
 			return new ResponseEntity<>(
 					errorHandler.mapErrors(validations.getFieldErrors()), 

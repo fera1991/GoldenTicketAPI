@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,7 +45,7 @@ public class PermissionController {
 	}
 	
 	@PostMapping("/")
-	public ResponseEntity<?> savePermission(@RequestBody @Valid SavePermissionDTO info, BindingResult validations){
+	public ResponseEntity<?> savePermission(@ModelAttribute @Valid SavePermissionDTO info, BindingResult validations){
 		if(validations.hasErrors()) {
 			return new ResponseEntity<>(
 					errorHandler.mapErrors(validations.getFieldErrors()), 

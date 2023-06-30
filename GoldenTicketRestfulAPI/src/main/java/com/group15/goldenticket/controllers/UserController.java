@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -62,7 +63,7 @@ public class UserController {
 	private RequestErrorHandler errorHandler;
 	
 	@PostMapping("/create")
-	public ResponseEntity<?> createUser(@RequestBody @Valid SaveUserDTO info, BindingResult validations){
+	public ResponseEntity<?> createUser(@ModelAttribute @Valid SaveUserDTO info, BindingResult validations){
 		if(validations.hasErrors()) {
 			return new ResponseEntity<>(
 					errorHandler.mapErrors(validations.getFieldErrors()), 
@@ -151,7 +152,7 @@ public class UserController {
 	}
 	
 	@PatchMapping("/update")
-	public ResponseEntity<?> updateUser(@RequestBody @Valid UpdateUserDTO info, BindingResult validations){
+	public ResponseEntity<?> updateUser(@ModelAttribute @Valid UpdateUserDTO info, BindingResult validations){
 		if(validations.hasErrors()) {
 			return new ResponseEntity<>(errorHandler.mapErrors(validations.getFieldErrors()),HttpStatus.BAD_REQUEST);
 		}
@@ -189,7 +190,7 @@ public class UserController {
 	
 	
 	@PatchMapping("/change-password")
-	public ResponseEntity<?> savePassword(@RequestBody @Valid ChangePasswordDTO info, BindingResult validations){
+	public ResponseEntity<?> savePassword(@ModelAttribute @Valid ChangePasswordDTO info, BindingResult validations){
 		if(validations.hasErrors()) {
 			return new ResponseEntity<>(errorHandler.mapErrors(validations.getFieldErrors()),HttpStatus.BAD_REQUEST);
 		}
@@ -263,7 +264,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/permission")
-    public ResponseEntity<?> assignPermission(@RequestBody @Valid UserPermissionDTO info, BindingResult validations) {
+    public ResponseEntity<?> assignPermission(@ModelAttribute @Valid UserPermissionDTO info, BindingResult validations) {
 
 		if(validations.hasErrors()) {
 			return new ResponseEntity<>(errorHandler.mapErrors(validations.getFieldErrors()),HttpStatus.BAD_REQUEST);

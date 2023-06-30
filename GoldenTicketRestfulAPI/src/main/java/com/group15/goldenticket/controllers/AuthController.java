@@ -1,6 +1,7 @@
 package com.group15.goldenticket.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -33,7 +34,7 @@ public class AuthController {
 	private RequestErrorHandler errorHandler;
 	
 	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestBody LoginDTO info, BindingResult validations) {
+	public ResponseEntity<?> login(@Valid @ModelAttribute LoginDTO info, BindingResult validations) {
 		System.out.println(info);
 		if(validations.hasErrors()) {
 			return new ResponseEntity<>(
@@ -60,7 +61,7 @@ public class AuthController {
 	}
 	
 	@PostMapping("/register")
-	public ResponseEntity<?> register(@RequestBody @Valid RegisterDTO info, BindingResult validations){
+	public ResponseEntity<?> register(@ModelAttribute @Valid RegisterDTO info, BindingResult validations){
 			//TODO:
 		return null;
 	}
