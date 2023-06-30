@@ -53,6 +53,15 @@ public class LocalityController {
 		return new ResponseEntity<>(locality,HttpStatus.OK);
 	}
 	
+	@GetMapping("/tikets/{id}")
+	public ResponseEntity<?> findAllTickets(@PathVariable(name = "id") String code) {
+		Locality locality = localityService.findOneById(code);
+		if(locality == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(locality.getTickets(),HttpStatus.OK);
+	}
+	
 	@PostMapping("/")
 	public ResponseEntity<?> saveLocality(@RequestBody @Valid SaveLocalityDTO info, BindingResult validations){
 		if(validations.hasErrors()) {

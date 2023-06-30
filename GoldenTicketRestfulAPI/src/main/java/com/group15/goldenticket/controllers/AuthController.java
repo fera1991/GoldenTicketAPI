@@ -32,7 +32,8 @@ public class AuthController {
 	private RequestErrorHandler errorHandler;
 	
 	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestBody @Valid LoginDTO info, BindingResult validations){
+	public ResponseEntity<?> login(@Valid @RequestBody LoginDTO info, BindingResult validations){
+		System.out.println(info);
 		if(validations.hasErrors()) {
 			return new ResponseEntity<>(
 					errorHandler.mapErrors(validations.getFieldErrors()), 

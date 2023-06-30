@@ -51,7 +51,7 @@ public class CategoryController {
 	}
 	
 	@GetMapping("/event/{category}")
-	public ResponseEntity<?> findAllCategory(@PathVariable(name = "category") String code) {
+	public ResponseEntity<?> findAllCategoryEvent(@PathVariable(name = "category") String code) {
 		Category category = categoryService.findOneById(code);
 		if(category == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);

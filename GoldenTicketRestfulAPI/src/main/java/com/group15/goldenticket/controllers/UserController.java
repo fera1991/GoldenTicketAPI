@@ -247,9 +247,13 @@ public class UserController {
 	    return hasUppercase && hasLowercase && hasNumber && hasSpecialCharacter;
 	}
 	
-	@GetMapping("/permission/{user}")
-	public ResponseEntity<?> findAllPermission(@PathVariable(name = "user") String code) {
-		User user = userService.findOneById(code);
+	@GetMapping("/permission")
+	public ResponseEntity<?> findAllPermission(HttpServletRequest request) {
+		String tokenHeader = request.getHeader("Authorization");
+    	String token = tokenHeader.substring(7);
+    	
+    	
+		User user = userService.findOneByIdentifier(jwtTools.getUsernameFrom(token));
 		if(user == null) {
 			return new ResponseEntity<>(new MessageDTO("User Not Found"),HttpStatus.NOT_FOUND);
 		}
@@ -271,6 +275,16 @@ public class UserController {
 		Permission permission = permissionService.findOneById(info.getPermission());
 		if(permission == null) {
 			return new ResponseEntity<>(new MessageDTO("Permission Not Found"),HttpStatus.NOT_FOUND);
+		}
+		List<UserXPermission> permissions = user.getUserXpermission();
+		Boolean flag = false;
+		for (UserXPermission data : permissions) {
+			if (data.getPermission().equals(permission)){
+				flag = true;
+			}
+        }
+		if(flag == true) {
+			return new ResponseEntity<>(new MessageDTO("Permission is Duplicated"),HttpStatus.CONFLICT);
 		}
 		
 		try {
