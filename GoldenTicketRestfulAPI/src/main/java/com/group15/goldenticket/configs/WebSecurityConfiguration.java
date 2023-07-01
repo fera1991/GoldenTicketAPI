@@ -1,6 +1,12 @@
 package com.group15.goldenticket.configs;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,7 +20,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
+
 
 import com.group15.goldenticket.models.entities.User;
 import com.group15.goldenticket.services.UserService;
@@ -36,11 +42,36 @@ public class WebSecurityConfiguration {
 	@Autowired
 	private JWTTokenFIlter filter;
 	
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+	    final CorsConfiguration configuration = new CorsConfiguration();
+	    
+	    // Set allowed origins to all
+	    configuration.setAllowedOrigins(Arrays.asList("*"));
+	    
+	    // Set allowed methods
+	    configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH"));
+	    
+	    // Set allowed headers
+	    configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+	    
+	    // Set allow credentials
+	    configuration.setAllowCredentials(true);
+	    
+	    // Set max age
+	    configuration.setMaxAge(3600L);
+	    
+	    final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	    source.registerCorsConfiguration("/**", configuration);
+	    
+	    return source;
+	}
+	
 	
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.httpBasic(Customizer.withDefaults()).csrf(csrf -> csrf.disable());
-		http.cors(Customizer.withDefaults());
+		http.cors().configurationSource(corsConfigurationSource());
 	    
 	    //Route filter
 	    http.authorizeHttpRequests(auth -> 
