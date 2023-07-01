@@ -63,9 +63,10 @@ public class UserController {
 	private RequestErrorHandler errorHandler;
 	
 	@GetMapping("/info")
-	public ResponseEntity<?> getUserByToken(HttpServletRequest request){
+	public ResponseEntity<?> getUserInfo(HttpServletRequest request){
 		String tokenHeader = request.getHeader("Authorization");
     	String token = tokenHeader.substring(7);
+    	
     	User user = userService.findOneByIdentifier(jwtTools.getUsernameFrom(token));
     	if(user == null) {
 			return new ResponseEntity<>(
