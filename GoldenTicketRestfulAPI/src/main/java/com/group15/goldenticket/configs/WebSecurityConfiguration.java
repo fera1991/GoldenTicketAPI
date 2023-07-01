@@ -43,29 +43,18 @@ public class WebSecurityConfiguration {
 	private JWTTokenFIlter filter;
 	
 	@Bean
-	public CorsConfigurationSource corsConfigurationSource() {
-	    final CorsConfiguration configuration = new CorsConfiguration();
-	    
-	    // Set allowed origins to all
-	    configuration.setAllowedOrigins(Arrays.asList("*"));
-	    
-	    // Set allowed methods
-	    configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH"));
-	    
-	    // Set allowed headers
-	    configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
-	    
-	    // Set allow credentials
-	    configuration.setAllowCredentials(true);
-	    
-	    // Set max age
-	    configuration.setMaxAge(3600L);
-	    
-	    final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-	    source.registerCorsConfiguration("/**", configuration);
-	    
-	    return source;
-	}
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:5173")); // Reemplaza "*" por el origen específico permitido
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
+    }
 	
 	
 	@Bean
