@@ -55,7 +55,7 @@ public class WebSecurityConfiguration {
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.httpBasic(Customizer.withDefaults()).csrf(csrf -> csrf.disable());
-		http.cors(Customizer.withDefaults());
+		http.cors(); 
 	    
 	    //Route filter
 	    http.authorizeHttpRequests(auth -> 
