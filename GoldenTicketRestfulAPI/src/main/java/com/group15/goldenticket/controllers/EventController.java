@@ -1,5 +1,6 @@
 package com.group15.goldenticket.controllers;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,6 +96,18 @@ public class EventController {
 		Category category = categoryService.findOneById(info.getCategoryId());
 		if(category == null) {
 			return new ResponseEntity<>(new MessageDTO("Category not Found"),HttpStatus.NOT_FOUND);
+		}
+		List<Event> events = eventService.findAll();
+		Boolean flag = false;
+		
+		for (Event event : events) {
+			if(info.getTittle().contentEquals(event.getTitle())) {
+				flag = true;
+			}
+			
+		}
+		if(flag) {
+			return new ResponseEntity<>(new MessageDTO("Event Duplicated"),HttpStatus.CONFLICT);
 		}
 		
 		try {

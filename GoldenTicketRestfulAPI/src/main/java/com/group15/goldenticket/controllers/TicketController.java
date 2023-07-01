@@ -23,8 +23,10 @@ import com.group15.goldenticket.models.entities.User;
 import com.group15.goldenticket.services.LocalityService;
 import com.group15.goldenticket.services.TicketService;
 import com.group15.goldenticket.services.UserService;
+import com.group15.goldenticket.utils.JWTTools;
 import com.group15.goldenticket.utils.RequestErrorHandler;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @RestController
@@ -39,6 +41,9 @@ public class TicketController {
 	
 	@Autowired
 	private LocalityService localityService;
+	
+	@Autowired
+	private JWTTools jwtTools;
 	
 	@Autowired
 	private RequestErrorHandler errorHandler;
@@ -59,13 +64,17 @@ public class TicketController {
 	}
 	
 	@PostMapping("/")
-	public ResponseEntity<?> saveTicket(@ModelAttribute @Valid SaveTicketDTO info, BindingResult validations){
+	public ResponseEntity<?> saveTicket(@ModelAttribute @Valid SaveTicketDTO info, BindingResult validations,HttpServletRequest request){
 		if(validations.hasErrors()) {
 			return new ResponseEntity<>(
 					errorHandler.mapErrors(validations.getFieldErrors()), 
 					HttpStatus.BAD_REQUEST);
 		}
-		User user = userService.findOneById(info.getUserId());
+		String tokenHeader = request.getHeader("Authorization");
+    	String token = tokenHeader.substring(7);
+    	
+    	
+		User user = userService.findOneByIdentifier(jwtTools.getUsernameFrom(token));
 		if(user == null) {
 			return new ResponseEntity<>(new MessageDTO("User Not Found"),HttpStatus.NOT_FOUND);
 		}

@@ -1,5 +1,7 @@
 package com.group15.goldenticket.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.group15.goldenticket.models.dtos.GoogleDTO;
 import com.group15.goldenticket.models.dtos.LoginDTO;
 import com.group15.goldenticket.models.dtos.MessageDTO;
 import com.group15.goldenticket.models.dtos.RegisterDTO;
@@ -60,10 +63,58 @@ public class AuthController {
 		}
 	}
 	
+	@PostMapping("/google")
+	public ResponseEntity<?> loginWithGoogle(@Valid @ModelAttribute GoogleDTO info, BindingResult validations) {
+		System.out.println(info);
+		if(validations.hasErrors()) {
+			return new ResponseEntity<>(
+					errorHandler.mapErrors(validations.getFieldErrors()), 
+					HttpStatus.BAD_REQUEST);
+		}
+		
+		User user = userService.findOneByIdentifier(info.getEmail());
+		
+		if(user == null) {
+			return new ResponseEntity<>(new MessageDTO("User Not Found"),HttpStatus.NOT_FOUND);
+		}
+		try {
+			Token token = userService.registerToken(user);
+			return new ResponseEntity<>(new TokenDTO(token), HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
 	@PostMapping("/register")
 	public ResponseEntity<?> register(@ModelAttribute @Valid RegisterDTO info, BindingResult validations){
-			//TODO:
-		return null;
+		if(validations.hasErrors()) {
+			return new ResponseEntity<>(
+					errorHandler.mapErrors(validations.getFieldErrors()), 
+					HttpStatus.BAD_REQUEST);
+		}
+		List<User> response = userService.findAll();
+		
+		boolean flag = false;
+		for (int i = 0; i< response.size(); i++) {
+			if(response.get(i).getEmail().equals(info.getEmail())) {
+				flag = true;
+			}
+		}
+		if (flag) {
+	        return new ResponseEntity<>(
+	                new MessageDTO("Email already exists"), HttpStatus.ACCEPTED);
+	    }
+		
+		try {
+			userService.register(info);
+			return new ResponseEntity<>(
+					new MessageDTO("User Created"), HttpStatus.CREATED);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(
+					new MessageDTO("Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 }

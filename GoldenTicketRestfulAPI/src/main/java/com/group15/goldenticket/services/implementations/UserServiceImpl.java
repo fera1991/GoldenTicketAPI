@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.group15.goldenticket.models.dtos.RegisterDTO;
 import com.group15.goldenticket.models.dtos.SaveUserDTO;
 import com.group15.goldenticket.models.dtos.UpdateUserDTO;
 import com.group15.goldenticket.models.entities.Token;
@@ -67,6 +68,18 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public User findOneByUsernameOrEmail(String username, String email) {
 		return userRepository.findOneByUsernameOrEmail(username, email);
+	}
+	
+	@Override
+	@Transactional(rollbackOn = Exception.class)
+	public void register(RegisterDTO info) throws Exception {
+		User user = new User(
+				info.getName(),
+				info.getEmail(),
+				info.getEmail(),
+				""
+				);
+		userRepository.save(user);
 	}
 
 	@Override
@@ -179,5 +192,6 @@ public class UserServiceImpl implements UserService{
 		
 		return userRepository.findOneByUsernameOrEmail(username, username);
 	}
+
 }
 	

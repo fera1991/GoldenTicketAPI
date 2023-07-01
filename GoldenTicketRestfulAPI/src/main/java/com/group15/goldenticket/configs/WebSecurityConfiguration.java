@@ -3,6 +3,7 @@ package com.group15.goldenticket.configs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -35,20 +36,11 @@ public class WebSecurityConfiguration {
 	@Autowired
 	private JWTTokenFIlter filter;
 	
-	@Bean
-	public CorsConfiguration corsConfiguration() {
-	    CorsConfiguration configuration = new CorsConfiguration();
-	    configuration.addAllowedOrigin("*");
-	    configuration.addAllowedMethod("*");
-	    configuration.addAllowedHeader("*");
-	    return configuration;
-	}
-	
 	
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.httpBasic(Customizer.withDefaults()).csrf(csrf -> csrf.disable());
-		http.cors().configurationSource(request -> corsConfiguration());
+		http.cors(Customizer.withDefaults());
 	    
 	    //Route filter
 	    http.authorizeHttpRequests(auth -> 

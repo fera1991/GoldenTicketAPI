@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 
+import com.group15.goldenticket.models.dtos.RegisterDTO;
 import com.group15.goldenticket.models.dtos.SaveUserDTO;
 import com.group15.goldenticket.models.dtos.UpdateUserDTO;
 import com.group15.goldenticket.models.entities.Token;
@@ -12,8 +13,7 @@ import com.group15.goldenticket.models.entities.User;
 
 
 public interface  UserService {
-	//void Register()throws Exception;
-	//void Login()throws Exception;
+	void register(RegisterDTO info) throws Exception;
 	void save(SaveUserDTO info)throws Exception;
 	void deleteById(String id) throws Exception;
 	void updatePasswordUser(User user,String newPassword) throws Exception;

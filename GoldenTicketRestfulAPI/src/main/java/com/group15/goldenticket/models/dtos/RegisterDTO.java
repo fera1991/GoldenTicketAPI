@@ -10,5 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RegisterDTO {
 	@NotEmpty
+	private String name;
+	@NotEmpty
 	private String email;
 }

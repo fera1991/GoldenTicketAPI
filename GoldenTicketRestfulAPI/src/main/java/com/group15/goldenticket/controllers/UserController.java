@@ -190,18 +190,21 @@ public class UserController {
 	
 	
 	@PatchMapping("/change-password")
-	public ResponseEntity<?> savePassword(@ModelAttribute @Valid ChangePasswordDTO info, BindingResult validations){
+	public ResponseEntity<?> savePassword(@ModelAttribute @Valid ChangePasswordDTO info, BindingResult validations,HttpServletRequest request){
 		if(validations.hasErrors()) {
 			return new ResponseEntity<>(errorHandler.mapErrors(validations.getFieldErrors()),HttpStatus.BAD_REQUEST);
 		}
-		User user = userService.findOneById(info.getUser());
+		String tokenHeader = request.getHeader("Authorization");
+    	String token = tokenHeader.substring(7);
+		User user = userService.findOneByIdentifier(jwtTools.getUsernameFrom(token));
+		
 		if(user == null) {
 			return new ResponseEntity<>(new MessageDTO("User Not Found"),HttpStatus.NOT_FOUND);
 		}
 		
 		if(user.getPassword() != null && !user.getPassword().isEmpty()) {
 			if(!userService.comparePassword(info.getNewPassword(), user.getPassword())) {
-				return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+				return new ResponseEntity<>(new MessageDTO("The new password must be different from the old one"),HttpStatus.NOT_ACCEPTABLE);
 			}
 		}
 		

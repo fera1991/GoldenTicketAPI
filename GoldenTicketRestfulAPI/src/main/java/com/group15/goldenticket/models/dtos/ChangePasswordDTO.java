@@ -11,6 +11,4 @@ import lombok.NoArgsConstructor;
 public class ChangePasswordDTO {
 	@NotEmpty
 	private String newPassword;
-	@NotEmpty
-	private String user;
 }
