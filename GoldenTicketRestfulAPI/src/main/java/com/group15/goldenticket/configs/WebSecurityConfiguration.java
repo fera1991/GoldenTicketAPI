@@ -41,17 +41,14 @@ public class WebSecurityConfiguration {
 	
 	@Autowired
 	private JWTTokenFIlter filter;
-
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
+	
+	@Bean
+	public CorsConfiguration corsConfiguration() {
 	    CorsConfiguration configuration = new CorsConfiguration();
 	    configuration.addAllowedOrigin("http://localhost:5173");
 	    configuration.addAllowedMethod("*");
 	    configuration.addAllowedHeader("*");
-	    
-	    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
+	    return configuration;
 	}
 	
 	
