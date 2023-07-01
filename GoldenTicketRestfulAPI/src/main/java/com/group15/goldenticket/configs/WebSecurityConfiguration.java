@@ -42,19 +42,19 @@ public class WebSecurityConfiguration {
 	@Autowired
 	private JWTTokenFIlter filter;
 	
-	@Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:5173")); // Reemplaza "*" por el origen específico permitido
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-        configuration.setAllowCredentials(true);
+	//@Bean
+    //public CorsConfigurationSource corsConfigurationSource() {
+    //    CorsConfiguration configuration = new CorsConfiguration();
+    //    configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:5173")); // Reemplaza "*" por el origen específico permitido
+    //    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+    //    configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+    //    configuration.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+    //    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    //    source.registerCorsConfiguration("/**", configuration);
 
-        return source;
-    }
+    //    return source;
+    //}
 	
 	
 	@Bean
