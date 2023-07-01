@@ -41,12 +41,24 @@ public class WebSecurityConfiguration {
 	
 	@Autowired
 	private JWTTokenFIlter filter;
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+	    CorsConfiguration configuration = new CorsConfiguration();
+	    configuration.addAllowedOrigin("http://localhost:5173");
+	    configuration.addAllowedMethod("*");
+	    configuration.addAllowedHeader("*");
+	    
+	    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+	}
 	
 	
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.httpBasic(Customizer.withDefaults()).csrf(csrf -> csrf.disable());
-	
+		http.cors(Customizer.withDefaults());
 	    
 	    //Route filter
 	    http.authorizeHttpRequests(auth -> 
