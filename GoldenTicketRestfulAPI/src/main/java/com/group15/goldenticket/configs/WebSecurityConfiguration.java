@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 
 import com.group15.goldenticket.models.entities.User;
 import com.group15.goldenticket.services.UserService;
@@ -34,11 +35,20 @@ public class WebSecurityConfiguration {
 	@Autowired
 	private JWTTokenFIlter filter;
 	
+	@Bean
+	public CorsConfiguration corsConfiguration() {
+	    CorsConfiguration configuration = new CorsConfiguration();
+	    configuration.addAllowedOrigin("*");
+	    configuration.addAllowedMethod("*");
+	    configuration.addAllowedHeader("*");
+	    return configuration;
+	}
+	
 	
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.httpBasic(Customizer.withDefaults()).csrf(csrf -> csrf.disable());
-		http.cors(Customizer.withDefaults());
+		http.cors().configurationSource(request -> corsConfiguration());
 	    
 	    //Route filter
 	    http.authorizeHttpRequests(auth -> 
