@@ -62,6 +62,22 @@ public class UserController {
 	@Autowired
 	private RequestErrorHandler errorHandler;
 	
+	@GetMapping("/info")
+	public ResponseEntity<?> getUserByToken(HttpServletRequest request){
+		String tokenHeader = request.getHeader("Authorization");
+    	String token = tokenHeader.substring(7);
+    	User user = userService.findOneByIdentifier(jwtTools.getUsernameFrom(token));
+    	if(user == null) {
+			return new ResponseEntity<>(
+					new MessageDTO("user not found"), HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(new ShowUserDTO(
+										user.getCode(),
+										user.getUsername(),
+										user.getEmail()
+													),HttpStatus.OK);
+	}
+	
 	@PostMapping("/create")
 	public ResponseEntity<?> createUser(@ModelAttribute @Valid SaveUserDTO info, BindingResult validations){
 		if(validations.hasErrors()) {
@@ -251,13 +267,9 @@ public class UserController {
 	    return hasUppercase && hasLowercase && hasNumber && hasSpecialCharacter;
 	}
 	
-	@GetMapping("/permission")
-	public ResponseEntity<?> findAllPermission(HttpServletRequest request) {
-		String tokenHeader = request.getHeader("Authorization");
-    	String token = tokenHeader.substring(7);
-    	
-    	
-		User user = userService.findOneByIdentifier(jwtTools.getUsernameFrom(token));
+	@GetMapping("/permission/{id}")
+	public ResponseEntity<?> findAllPermission(@PathVariable(name = "id") String code) {
+		User user = userService.findOneById(code);
 		if(user == null) {
 			return new ResponseEntity<>(new MessageDTO("User Not Found"),HttpStatus.NOT_FOUND);
 		}
