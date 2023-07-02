@@ -65,7 +65,7 @@ public class LocalityController {
 		return new ResponseEntity<>(locality.getTickets().size(),HttpStatus.OK);
 	}
 	
-	@PostMapping("/")
+	@PostMapping("/save")
 	public ResponseEntity<?> saveLocality(@ModelAttribute @Valid SaveLocalityDTO info, BindingResult validations){
 		if(validations.hasErrors()) {
 			return new ResponseEntity<>(
