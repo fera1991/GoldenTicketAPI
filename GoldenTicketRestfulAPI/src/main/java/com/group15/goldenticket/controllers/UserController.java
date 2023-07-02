@@ -232,7 +232,7 @@ public class UserController {
 	    }
 		
 		try {
-			userService.updatePasswordUser(user,info.getNewPassword());
+			userService.updatePasswordUser(user,info);
 			return new ResponseEntity<>(
 					new MessageDTO("Password updated"), HttpStatus.CREATED);
 		} catch (Exception e) {

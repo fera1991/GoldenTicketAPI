@@ -39,6 +39,8 @@ public class LocalityController {
 	@Autowired
 	private RequestErrorHandler errorHandler;
 	
+	
+	
 	@GetMapping("/all")
 	public ResponseEntity<?> findAllLocality(){
 		List<Locality> localities = localityService.findAll();
@@ -60,7 +62,7 @@ public class LocalityController {
 		if(locality == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(locality.getTickets(),HttpStatus.OK);
+		return new ResponseEntity<>(locality.getTickets().size(),HttpStatus.OK);
 	}
 	
 	@PostMapping("/")

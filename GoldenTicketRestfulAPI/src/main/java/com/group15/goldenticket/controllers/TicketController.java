@@ -83,6 +83,12 @@ public class TicketController {
 		if(locality == null) {
 			return new ResponseEntity<>(new MessageDTO("Locality Not Found"),HttpStatus.NOT_FOUND);
 		}
+		
+		if(locality.getTickets().size() == locality.getAvailableQuantity()) {
+			return new ResponseEntity<>(new MessageDTO("Locality is Sold-out"),HttpStatus.NOT_FOUND);
+		}
+		
+		
 		try {
 			ticketService.save(info,user,locality);
 			return new ResponseEntity<>(

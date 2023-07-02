@@ -5,15 +5,19 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.group15.goldenticket.models.dtos.ChangePasswordDTO;
 import com.group15.goldenticket.models.dtos.RegisterDTO;
 import com.group15.goldenticket.models.dtos.SaveUserDTO;
+import com.group15.goldenticket.models.dtos.ShowTicketDTO;
 import com.group15.goldenticket.models.dtos.UpdateUserDTO;
+import com.group15.goldenticket.models.entities.Event;
 import com.group15.goldenticket.models.entities.Token;
 import com.group15.goldenticket.models.entities.User;
 import com.group15.goldenticket.repositories.TokenRepository;
@@ -96,9 +100,9 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	@Transactional(rollbackOn = Exception.class)
-	public void updatePasswordUser(User user, String newPassword) throws Exception {
+	public void updatePasswordUser(User user, ChangePasswordDTO info) throws Exception {
 		User updateUser = user;
-		updateUser.setPassword(passwordEncoder.encode(newPassword));
+		updateUser.setPassword(passwordEncoder.encode(info.getNewPassword()));
 		userRepository.save(updateUser);
 	}
 
@@ -191,6 +195,17 @@ public class UserServiceImpl implements UserService{
 			.getName();
 		
 		return userRepository.findOneByUsernameOrEmail(username, username);
+	}
+
+	@Override
+	public Page<ShowTicketDTO> getPaginatedList(List<ShowTicketDTO> list, int page, int size) {
+		int startIndex = page * size;
+        int endIndex = Math.min(startIndex + size, list.size());
+        
+        List<ShowTicketDTO> sublist = list.subList(startIndex, endIndex);
+        PageRequest pageRequest = PageRequest.of(page,size);
+        
+        return new PageImpl<>(sublist,pageRequest,list.size());
 	}
 
 }
