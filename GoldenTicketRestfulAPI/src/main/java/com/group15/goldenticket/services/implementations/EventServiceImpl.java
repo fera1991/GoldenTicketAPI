@@ -26,27 +26,6 @@ public class EventServiceImpl implements EventService{
 	@Autowired
 	EventRepository eventRepository;
 	
-	@Override
-	@Transactional(rollbackOn = Exception.class)
-	public void save(SaveEventDTO info,Category category) throws Exception {
-		String format = "dd/MM/yyyy";
-		SimpleDateFormat dateFormat = new SimpleDateFormat(format);
-		Date date = dateFormat.parse(info.getDate());
-		
-		Event event = new Event(
-				category,
-				info.getPlace(),
-				info.getTittle(),
-				date,
-				info.getCapacity(),
-				info.getInvolved(),
-				info.getImage(),
-				info.getDuration(),
-				info.getSponsors(),
-				"Active"
-				);
-		eventRepository.save(event);
-	}
 	
 	@Override
 	@Transactional(rollbackOn = Exception.class)
@@ -118,7 +97,30 @@ public class EventServiceImpl implements EventService{
 		return eventRepository.findAll();
 	}
 
+	@Override
+	public Event save(SaveEventDTO info, Category category) throws Exception {
+		String format = "dd/MM/yyyy";
+		SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+		Date date = dateFormat.parse(info.getDate());
+		
+		Event event = new Event(
+				category,
+				info.getPlace(),
+				info.getTittle(),
+				date,
+				info.getCapacity(),
+				info.getInvolved(),
+				info.getImage(),
+				info.getDuration(),
+				info.getSponsors(),
+				"Active"
+				);
+		
+		return eventRepository.save(event);
+	}
+
 	
+
 	
 
 

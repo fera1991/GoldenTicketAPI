@@ -126,9 +126,8 @@ public class EventController {
 		}
 		
 		try {
-			eventService.save(info,category);
-			return new ResponseEntity<>(
-					new MessageDTO("Event Created"), HttpStatus.CREATED);
+			Event newEvent = eventService.save(info,category);
+			return new ResponseEntity<>(newEvent.getCode(), HttpStatus.CREATED);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<>(

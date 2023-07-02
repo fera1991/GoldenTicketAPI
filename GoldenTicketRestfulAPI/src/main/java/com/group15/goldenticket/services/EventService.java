@@ -12,7 +12,7 @@ import com.group15.goldenticket.models.entities.Event;
 import jakarta.validation.Valid;
 
 public interface  EventService {
-	void save(SaveEventDTO info,Category category)throws Exception;
+	Event save(SaveEventDTO info,Category category)throws Exception;
 	void deleteById(String id) throws Exception;
 	Event findOneById(String id);
 	List<Event> findAll();
