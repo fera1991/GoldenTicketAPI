@@ -2,6 +2,7 @@ package com.group15.goldenticket.services.implementations;
 
 
 import java.text.SimpleDateFormat;
+
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -30,9 +31,9 @@ public class EventServiceImpl implements EventService{
 	@Override
 	@Transactional(rollbackOn = Exception.class)
 	public void update(Event event, @Valid SaveEventDTO info, Category category) throws Exception {
-		String format = "yyyy-MM-dd";
-		SimpleDateFormat dateFormat = new SimpleDateFormat(format);
-		Date date = dateFormat.parse(info.getDate());
+		String format = "yyyy-MM-dd HH:mm";
+	    SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+	    Date date = dateFormat.parse(info.getDate());
 		
 		Event updateEvent = event;
 		updateEvent.setCategory(category);
