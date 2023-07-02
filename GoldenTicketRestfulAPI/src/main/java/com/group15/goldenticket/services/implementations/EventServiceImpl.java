@@ -1,6 +1,7 @@
 package com.group15.goldenticket.services.implementations;
 
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import java.util.Date;
@@ -30,11 +31,7 @@ public class EventServiceImpl implements EventService{
 	
 	@Override
 	@Transactional(rollbackOn = Exception.class)
-	public void update(Event event, @Valid SaveEventDTO info, Category category) throws Exception {
-		String format = "yyyy-MM-dd HH:mm";
-	    SimpleDateFormat dateFormat = new SimpleDateFormat(format);
-	    Date date = dateFormat.parse(info.getDate());
-		
+	public void update(Event event, @Valid SaveEventDTO info, Category category, Date date) throws Exception {
 		Event updateEvent = event;
 		updateEvent.setCategory(category);
 		updateEvent.setPlace(info.getPlace());
@@ -99,10 +96,9 @@ public class EventServiceImpl implements EventService{
 	}
 
 	@Override
-	public Event save(SaveEventDTO info, Category category) throws Exception {
-		String format = "dd/MM/yyyy";
-		SimpleDateFormat dateFormat = new SimpleDateFormat(format);
-		Date date = dateFormat.parse(info.getDate());
+	public Event save(SaveEventDTO info, Category category, Date date) throws Exception {
+
+
 		
 		Event event = new Event(
 				category,

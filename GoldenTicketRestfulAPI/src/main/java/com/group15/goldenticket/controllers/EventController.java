@@ -1,7 +1,11 @@
 package com.group15.goldenticket.controllers;
 
-import java.util.Iterator;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -125,13 +129,21 @@ public class EventController {
 			return new ResponseEntity<>(new MessageDTO("Event Duplicated"),HttpStatus.CONFLICT);
 		}
 		
+		
 		try {
-			Event newEvent = eventService.save(info,category);
-			return new ResponseEntity<>(newEvent.getCode(), HttpStatus.CREATED);
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			format.setTimeZone(TimeZone.getTimeZone("GMT"));
+	        Date date = format.parse(info.getDate());
+			Event newEvent = eventService.save(info,category,date);
+			return new ResponseEntity<>(date, HttpStatus.CREATED);
+			
 		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<>(
-					new MessageDTO("Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
+			 if (e instanceof ParseException) {
+			        return new ResponseEntity<>(new MessageDTO("Invalid date format"), HttpStatus.BAD_REQUEST);
+			    } else {
+			        e.printStackTrace();
+			        return new ResponseEntity<>(new MessageDTO("Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
+			    }
 		}
 	}
 	
@@ -158,7 +170,7 @@ public class EventController {
 	}
 	
 	@PatchMapping("/sold-out/{id}")
-	public ResponseEntity<?> soldOut(@PathVariable(name = "id") String code) {
+	public ResponseEntity<?> soldOut(@ModelAttribute(name = "id") String code) {
 		Event event = eventService.findOneById(code);
 		if(event == null) {
 			return new ResponseEntity<>(new MessageDTO("Event Not Found"),HttpStatus.NOT_FOUND);
@@ -209,15 +221,22 @@ public class EventController {
 	        return new ResponseEntity<>(
 	                new MessageDTO("Event name already exists"), HttpStatus.CONFLICT);
 	    }
+
 		
 		try {
-			eventService.update(event,info,category);
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			format.setTimeZone(TimeZone.getTimeZone("GMT"));
+	        Date date = format.parse(info.getDate());
+			eventService.update(event,info,category, date);
 			return new ResponseEntity<>(
 					new MessageDTO("Event Created"), HttpStatus.CREATED);
 		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<>(
-					new MessageDTO("Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
+			 if (e instanceof ParseException) {
+			        return new ResponseEntity<>(new MessageDTO("Invalid date format"), HttpStatus.BAD_REQUEST);
+			    } else {
+			        e.printStackTrace();
+			        return new ResponseEntity<>(new MessageDTO("Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
+			    }
 		}
 	}
 	

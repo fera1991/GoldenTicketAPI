@@ -1,5 +1,7 @@
 package com.group15.goldenticket.models.dtos;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -16,7 +18,9 @@ public class SaveEventDTO {
 	private String place;
 	@NotEmpty
 	private String tittle;
+	
 	@NotEmpty
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
 	private String date;
 	@NotNull
 	private Integer capacity;
