@@ -53,7 +53,7 @@ public class WebSecurityConfiguration {
 	    //Route filter
 	    http.authorizeHttpRequests(auth -> 
 	    	auth
-	    		.requestMatchers("/auth/**","/event/all","/category/event/**","/category/all").permitAll()
+	    		.requestMatchers("/auth/**","/event/all","/event/{id}","/category/event/**","/category/all").permitAll()
 	    		.anyRequest().authenticated()
 	    );
 	    
