@@ -1,7 +1,10 @@
 package com.group15.goldenticket.models.entities;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,14 +14,17 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @NoArgsConstructor
 @Entity
 @Table(name = "invoice")
+@ToString(exclude = {"tickets"})
 public class Invoice {
 	@Id
 	@Column(name = "id_invoice")
@@ -32,18 +38,17 @@ public class Invoice {
 	@JoinColumn(name = "id_user", nullable = true)
 	private User user;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_ticket", nullable = true)
-	private Ticket ticket;
-	
 	@Column(name = "total")
 	private Float total;
+	
+	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
+	@JsonIgnore
+	private List<Ticket> tickets;
 
 	public Invoice(Date dateIssue, User user, Ticket ticket, Float total) {
 		super();
 		this.dateIssue = dateIssue;
 		this.user = user;
-		this.ticket = ticket;
 		this.total = total;
 	}
 	

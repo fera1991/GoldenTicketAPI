@@ -21,11 +21,21 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
-@ToString(exclude = {"validations","transfers","Invoices"})
+@ToString(exclude = {"validations","transfers"})
 @NoArgsConstructor
 @Entity
 @Table(name = "ticket")
 public class Ticket {
+	public Ticket(UUID code, User user, Locality locality, Date purchaseDate, Invoice invoice) {
+		super();
+		this.code = code;
+		this.user = user;
+		this.locality = locality;
+		this.purchaseDate = purchaseDate;
+		this.invoice = invoice;
+	}
+
+
 	@Id
 	@Column(name = "id_ticket")
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -42,6 +52,10 @@ public class Ticket {
 	@Column(name = "purchase_date")
 	private Date purchaseDate;
 	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_invoice", nullable = true)
+	private Invoice invoice;
+	
 	@OneToMany(mappedBy = "ticket", fetch = FetchType.LAZY)
 	@JsonIgnore
 	private List<Validation> validations;
@@ -50,16 +64,7 @@ public class Ticket {
 	@JsonIgnore
 	private List<Transfer> transfers;
 	
-	@OneToMany(mappedBy = "ticket", fetch = FetchType.LAZY)
-	@JsonIgnore
-	private List<Invoice> Invoices;
 
-	public Ticket(User user, Locality locality, Date purchaseDate) {
-		super();
-		this.user = user;
-		this.locality = locality;
-		this.purchaseDate = purchaseDate;
-	}
 	
 	
 	
