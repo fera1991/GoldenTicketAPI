@@ -24,6 +24,7 @@ import com.group15.goldenticket.models.dtos.PageDTO;
 import com.group15.goldenticket.models.dtos.SaveEventDTO;
 import com.group15.goldenticket.models.entities.Category;
 import com.group15.goldenticket.models.entities.Event;
+import com.group15.goldenticket.models.entities.Locality;
 import com.group15.goldenticket.services.CategoryService;
 import com.group15.goldenticket.services.EventService;
 import com.group15.goldenticket.utils.RequestErrorHandler;
@@ -44,6 +45,21 @@ public class EventController {
 	
 	@Autowired
 	private RequestErrorHandler errorHandler;
+	
+	@GetMapping("/ticket/{id}")
+	public ResponseEntity<?> findAmoutOfTickets(@PathVariable(name = "id") String code) {
+		Event event = eventService.findOneById(code);
+		if(event == null) {
+			return new ResponseEntity<>(new MessageDTO("Event Not Found"),HttpStatus.NOT_FOUND);
+		}
+		int ticketQuantity = 0;
+		
+		for (Locality localities : event.getLocalities()) {
+			ticketQuantity =+ localities.getTickets().size();
+		}
+		int Quantity = event.getCapacity() - ticketQuantity;
+		return new ResponseEntity<>(Quantity,HttpStatus.OK);
+	}
 	
 	@GetMapping("/locality/{id}")
 	public ResponseEntity<?> findAllLocalityEvent(@PathVariable(name = "id") String code) {
