@@ -135,7 +135,7 @@ public class EventController {
 			format.setTimeZone(TimeZone.getTimeZone("GMT"));
 	        Date date = format.parse(info.getDate());
 			Event newEvent = eventService.save(info,category,date);
-			return new ResponseEntity<>(date, HttpStatus.CREATED);
+			return new ResponseEntity<>(newEvent.getCode(), HttpStatus.CREATED);
 			
 		} catch (Exception e) {
 			 if (e instanceof ParseException) {
