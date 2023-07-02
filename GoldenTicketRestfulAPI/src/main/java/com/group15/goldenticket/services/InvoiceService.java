@@ -8,7 +8,7 @@ import com.group15.goldenticket.models.entities.Ticket;
 import com.group15.goldenticket.models.entities.User;
 
 public interface  InvoiceService {
-	void save(SaveInvoiceDTO info,User user,Ticket ticket)throws Exception;
+	Invoice save(SaveInvoiceDTO info,User user)throws Exception;
 	void deleteById(String id) throws Exception;
 	Invoice findOneById(String id);
 	List<Invoice> findAll();

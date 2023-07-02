@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,8 +24,10 @@ import com.group15.goldenticket.models.entities.User;
 import com.group15.goldenticket.services.InvoiceService;
 import com.group15.goldenticket.services.TicketService;
 import com.group15.goldenticket.services.UserService;
+import com.group15.goldenticket.utils.JWTTools;
 import com.group15.goldenticket.utils.RequestErrorHandler;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @RestController
@@ -39,6 +42,10 @@ public class InvoiceController {
 	
 	@Autowired
 	private TicketService ticketService;
+	
+	@Autowired
+	private JWTTools jwtTools;
+	
 	
 	@Autowired
 	private RequestErrorHandler errorHandler;
@@ -56,24 +63,24 @@ public class InvoiceController {
 	}
 	
 	@PostMapping("/")
-	public ResponseEntity<?> saveInvoice(@RequestBody @Valid SaveInvoiceDTO info, BindingResult validations){
+	public ResponseEntity<?> saveInvoice(@ModelAttribute @Valid SaveInvoiceDTO info, BindingResult validations,HttpServletRequest request){
 		if(validations.hasErrors()) {
 			return new ResponseEntity<>(
 					errorHandler.mapErrors(validations.getFieldErrors()), 
 					HttpStatus.BAD_REQUEST);
 		}
-		User user = userService.findOneById(info.getUserId());
+		String tokenHeader = request.getHeader("Authorization");
+    	String token = tokenHeader.substring(7);
+    	
+    	
+		User user = userService.findOneByIdentifier(jwtTools.getUsernameFrom(token));
 		if(user == null) {
 			return new ResponseEntity<>(new MessageDTO("User Not Found"),HttpStatus.NOT_FOUND);
 		}
-		Ticket ticket = ticketService.findOneById(info.getTicketId());
-		if(ticket == null) {
-			return new ResponseEntity<>(new MessageDTO("Ticket Not Found"),HttpStatus.NOT_FOUND);
-		}
 		try {
-			invoiceService.save(info,user,ticket);
-			return new ResponseEntity<>(
-					new MessageDTO("Invoice Created"), HttpStatus.CREATED);
+			Invoice newInvoice = invoiceService.save(info,user);
+			
+			return new ResponseEntity<>(newInvoice.getCode(), HttpStatus.CREATED);
 			
 		} catch (Exception e) {
 			return new ResponseEntity<>(

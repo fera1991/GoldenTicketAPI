@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.group15.goldenticket.models.dtos.MessageDTO;
 import com.group15.goldenticket.models.dtos.SaveTicketDTO;
+import com.group15.goldenticket.models.entities.Invoice;
 import com.group15.goldenticket.models.entities.Locality;
 import com.group15.goldenticket.models.entities.Ticket;
 import com.group15.goldenticket.models.entities.User;
+import com.group15.goldenticket.services.InvoiceService;
 import com.group15.goldenticket.services.LocalityService;
 import com.group15.goldenticket.services.TicketService;
 import com.group15.goldenticket.services.UserService;
@@ -41,6 +43,9 @@ public class TicketController {
 	
 	@Autowired
 	private LocalityService localityService;
+	
+	@Autowired
+	private InvoiceService invoiceService;
 	
 	@Autowired
 	private JWTTools jwtTools;
@@ -84,13 +89,18 @@ public class TicketController {
 			return new ResponseEntity<>(new MessageDTO("Locality Not Found"),HttpStatus.NOT_FOUND);
 		}
 		
+		Invoice invoice = invoiceService.findOneById(info.getInvoiceId());
+		if(invoice == null) {
+			return new ResponseEntity<>(new MessageDTO("Invoice Not Found"),HttpStatus.NOT_FOUND);
+		}
+		
 		if(locality.getTickets().size() == locality.getAvailableQuantity()) {
 			return new ResponseEntity<>(new MessageDTO("Locality is Sold-out"),HttpStatus.NOT_FOUND);
 		}
 		
 		
 		try {
-			ticketService.save(info,user,locality);
+			ticketService.save(info,user,locality,invoice);
 			return new ResponseEntity<>(
 					new MessageDTO("Ticket Created"), HttpStatus.CREATED);
 		} catch (Exception e) {

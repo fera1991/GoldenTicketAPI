@@ -45,7 +45,7 @@ public class Invoice {
 	@JsonIgnore
 	private List<Ticket> tickets;
 
-	public Invoice(Date dateIssue, User user, Ticket ticket, Float total) {
+	public Invoice(Date dateIssue, User user, Float total) {
 		super();
 		this.dateIssue = dateIssue;
 		this.user = user;

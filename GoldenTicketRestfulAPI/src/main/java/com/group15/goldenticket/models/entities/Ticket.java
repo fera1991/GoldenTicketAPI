@@ -26,15 +26,6 @@ import lombok.ToString;
 @Entity
 @Table(name = "ticket")
 public class Ticket {
-	public Ticket(UUID code, User user, Locality locality, Date purchaseDate, Invoice invoice) {
-		super();
-		this.code = code;
-		this.user = user;
-		this.locality = locality;
-		this.purchaseDate = purchaseDate;
-		this.invoice = invoice;
-	}
-
 
 	@Id
 	@Column(name = "id_ticket")
@@ -64,7 +55,13 @@ public class Ticket {
 	@JsonIgnore
 	private List<Transfer> transfers;
 	
-
+	public Ticket(User user, Locality locality, Date purchaseDate, Invoice invoice) {
+		super();
+		this.user = user;
+		this.locality = locality;
+		this.purchaseDate = purchaseDate;
+		this.invoice = invoice;
+	}
 	
 	
 	

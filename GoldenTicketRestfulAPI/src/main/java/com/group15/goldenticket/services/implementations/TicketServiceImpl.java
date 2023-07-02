@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.group15.goldenticket.models.dtos.SaveTicketDTO;
+import com.group15.goldenticket.models.entities.Invoice;
 import com.group15.goldenticket.models.entities.Locality;
 import com.group15.goldenticket.models.entities.Ticket;
 import com.group15.goldenticket.models.entities.User;
@@ -23,12 +24,13 @@ public class TicketServiceImpl implements TicketService{
 	
 	@Override
 	@Transactional(rollbackOn = Exception.class)
-	public void save(SaveTicketDTO info, User user, Locality locality) throws Exception {
+	public void save(SaveTicketDTO info, User user, Locality locality, Invoice invoice) throws Exception {
 		Date dateTime = new Date();
 		Ticket ticket = new Ticket(
 				user,
 				locality,
-				dateTime
+				dateTime,
+				invoice
 				);
 		ticketRepository.save(ticket);
 	}

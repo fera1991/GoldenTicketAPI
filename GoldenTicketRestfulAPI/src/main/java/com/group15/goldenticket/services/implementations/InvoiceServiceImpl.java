@@ -20,15 +20,14 @@ public class InvoiceServiceImpl implements InvoiceService{
 	InvoiceRepository invoiceRepository;
 
 	@Override
-	public void save(SaveInvoiceDTO info, User user, Ticket ticket) throws Exception {
+	public Invoice save(SaveInvoiceDTO info, User user) throws Exception {
 		Date dateTime = new Date();
 		Invoice invoice = new Invoice(
 				dateTime,
 				user,
-				ticket,
 				info.getTotal()
 				);
-		
+		return invoiceRepository.save(invoice);
 	}
 	
 	@Override

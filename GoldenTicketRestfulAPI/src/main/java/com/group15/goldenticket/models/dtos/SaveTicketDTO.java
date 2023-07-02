@@ -11,4 +11,6 @@ import lombok.NoArgsConstructor;
 public class SaveTicketDTO {
 	@NotEmpty
 	private String localityId;
+	@NotEmpty
+	private String invoiceId;
 }
