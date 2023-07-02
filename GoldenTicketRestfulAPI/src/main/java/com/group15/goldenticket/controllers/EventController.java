@@ -57,8 +57,7 @@ public class EventController {
 		for (Locality localities : event.getLocalities()) {
 			ticketQuantity =+ localities.getTickets().size();
 		}
-		int Quantity = event.getCapacity() - ticketQuantity;
-		return new ResponseEntity<>(Quantity,HttpStatus.OK);
+		return new ResponseEntity<>(ticketQuantity,HttpStatus.OK);
 	}
 	
 	@GetMapping("/locality/{id}")
