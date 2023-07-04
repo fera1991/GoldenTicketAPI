@@ -72,8 +72,7 @@ public class ValidationController {
 	        validation.setHash(hash);
 	        validationService.update(validation);
 			
-			return new ResponseEntity<>(
-					new MessageDTO("Validation Created, Hash: " + hash), HttpStatus.CREATED);
+			return new ResponseEntity<>(hash, HttpStatus.CREATED);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<>(

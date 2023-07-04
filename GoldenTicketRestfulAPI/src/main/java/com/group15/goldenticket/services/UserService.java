@@ -16,7 +16,7 @@ import com.group15.goldenticket.models.entities.User;
 
 
 public interface  UserService {
-	void register(RegisterDTO info) throws Exception;
+	User register(RegisterDTO info) throws Exception;
 	void save(SaveUserDTO info)throws Exception;
 	void deleteById(String id) throws Exception;
 	void updatePasswordUser(User user,ChangePasswordDTO info) throws Exception;

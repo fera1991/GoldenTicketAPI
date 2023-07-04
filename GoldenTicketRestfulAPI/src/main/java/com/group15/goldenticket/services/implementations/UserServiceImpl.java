@@ -76,14 +76,14 @@ public class UserServiceImpl implements UserService{
 	
 	@Override
 	@Transactional(rollbackOn = Exception.class)
-	public void register(RegisterDTO info) throws Exception {
+	public User register(RegisterDTO info) throws Exception {
 		User user = new User(
 				info.getName(),
 				info.getEmail(),
 				info.getEmail(),
 				""
 				);
-		userRepository.save(user);
+		return userRepository.save(user);
 	}
 
 	@Override

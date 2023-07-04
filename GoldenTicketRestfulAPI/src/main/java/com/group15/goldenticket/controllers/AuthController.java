@@ -19,9 +19,12 @@ import com.group15.goldenticket.models.dtos.LoginDTO;
 import com.group15.goldenticket.models.dtos.MessageDTO;
 import com.group15.goldenticket.models.dtos.RegisterDTO;
 import com.group15.goldenticket.models.dtos.TokenDTO;
+import com.group15.goldenticket.models.entities.Permission;
 import com.group15.goldenticket.models.entities.Token;
 import com.group15.goldenticket.models.entities.User;
+import com.group15.goldenticket.services.PermissionService;
 import com.group15.goldenticket.services.UserService;
+import com.group15.goldenticket.services.UserXPermissionService;
 import com.group15.goldenticket.utils.RequestErrorHandler;
 
 import jakarta.validation.Valid;
@@ -32,6 +35,12 @@ import jakarta.validation.Valid;
 public class AuthController {
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private UserXPermissionService userXpermissionService;
+	
+	@Autowired
+	private PermissionService permissionService;
 	
 	@Autowired
 	private RequestErrorHandler errorHandler;
@@ -105,9 +114,14 @@ public class AuthController {
 	        return new ResponseEntity<>(
 	                new MessageDTO("Email already exists"), HttpStatus.ACCEPTED);
 	    }
-		
+		Permission permission = permissionService.findOneById("ee08b865-c0d6-4d9a-b41d-49c3771cff0c");
+		if(permission == null) {
+			return new ResponseEntity<>(new MessageDTO("Permission Not Found"),HttpStatus.NOT_FOUND);
+		}
 		try {
-			userService.register(info);
+			User newUser = userService.register(info);
+			userXpermissionService.save(newUser,permission);
+			
 			return new ResponseEntity<>(
 					new MessageDTO("User Created"), HttpStatus.CREATED);
 		} catch (Exception e) {
