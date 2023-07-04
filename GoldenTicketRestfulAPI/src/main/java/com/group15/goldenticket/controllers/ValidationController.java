@@ -111,7 +111,7 @@ public class ValidationController {
 		        validationService.update(validation); 
 		        
 				return new ResponseEntity<>(
-						new MessageDTO("Validation Compleated"), HttpStatus.CREATED);
+						new MessageDTO("Validation Completed"), HttpStatus.CREATED);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return new ResponseEntity<>(
