@@ -193,7 +193,7 @@ public class EventController {
 	
 	
 	@PatchMapping("/{id}")
-	public ResponseEntity<?> UpdateEvent(@RequestBody @Valid SaveEventDTO info, BindingResult validations,@PathVariable(name = "id") String code) {
+	public ResponseEntity<?> UpdateEvent(@ModelAttribute @Valid SaveEventDTO info, BindingResult validations,@PathVariable(name = "id") String code) {
 		Event event = eventService.findOneById(code);
 		if(event == null) {
 			return new ResponseEntity<>(new MessageDTO("Event Not Found"),HttpStatus.NOT_FOUND);
