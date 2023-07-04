@@ -217,6 +217,10 @@ public class EventController {
 			}
 		}
 		
+		if(info.getTittle() == event.getTitle()) {
+			flag = false;
+		}
+		
 		if (flag) {
 	        return new ResponseEntity<>(
 	                new MessageDTO("Event name already exists"), HttpStatus.CONFLICT);
