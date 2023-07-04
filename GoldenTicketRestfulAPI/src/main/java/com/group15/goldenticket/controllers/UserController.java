@@ -28,10 +28,12 @@ import com.group15.goldenticket.models.entities.UserXPermission;
 import com.group15.goldenticket.models.dtos.ChangePasswordDTO;
 import com.group15.goldenticket.models.dtos.MessageDTO;
 import com.group15.goldenticket.models.dtos.PageDTO;
+import com.group15.goldenticket.models.dtos.PermissionVerificationDTO;
 import com.group15.goldenticket.models.dtos.SaveUserDTO;
 import com.group15.goldenticket.models.dtos.ShowTicketDTO;
 import com.group15.goldenticket.models.dtos.ShowUserDTO;
 import com.group15.goldenticket.models.dtos.UpdateUserDTO;
+import com.group15.goldenticket.models.dtos.UserPermissionAsignedDTO;
 import com.group15.goldenticket.services.PermissionService;
 import com.group15.goldenticket.services.UserService;
 import com.group15.goldenticket.services.UserXPermissionService;
@@ -113,18 +115,113 @@ public class UserController {
 	@GetMapping("/all")
 	public ResponseEntity<?> findAllUser(@RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "10") int size, @RequestParam(required = false) String fragment){
 		if(fragment != null && !fragment.isEmpty()) {
-			Page<User> userNames = userService.findAllTitle(fragment,page,size);
-			return new ResponseEntity<>(new PageDTO<User>(
-					userNames.getContent(),
-					userNames.getNumber(),
-					userNames.getSize(),
-					userNames.getTotalElements(),
-					userNames.getTotalPages())
+			List<User> test = userService.findAllTitle(fragment,page,size);
+			List<UserPermissionAsignedDTO> Content = new ArrayList<UserPermissionAsignedDTO>();
+			List<Permission> permission = permissionService.findAll();
+			
+			for (User user : test) {
+				
+				List<PermissionVerificationDTO> ListPermission = new ArrayList<PermissionVerificationDTO>();
+				
+				for (Permission permissiondata : permission) {
+					List<UserXPermission> listOfPermissionOwner= user.getUserXpermission();
+					PermissionVerificationDTO data = new PermissionVerificationDTO();
+					
+					boolean flag = true;
+					
+					for (UserXPermission permission2 : listOfPermissionOwner) {
+							if(permissiondata.getCode() == permission2.getPermission().getCode()) {
+								data.setCode(permission2.getCode());
+								data.setPermission(permission2.getPermission());
+								data.setStatus(true);
+								ListPermission.add(data);
+								flag = false;
+							}
+					}
+					
+					if(flag) {
+						data.setCode(null);
+						data.setPermission(permissiondata);
+						data.setStatus(false);
+						ListPermission.add(data);
+					}
+
+				}
+				
+				
+				
+				
+				UserPermissionAsignedDTO userPermission = new UserPermissionAsignedDTO(
+						user.getCode(),
+						user.getName(),
+						user.getUsername(),
+						user.getEmail(),
+						user.getActive(),
+						ListPermission
+						);
+				Content.add(userPermission);
+			}
+			
+			Page<UserPermissionAsignedDTO> users = userService.getPaginatedUsers(Content, page, size);
+			
+			return new ResponseEntity<>(new PageDTO<UserPermissionAsignedDTO>(
+					users.getContent(),
+					users.getNumber(),
+					users.getSize(),
+					users.getTotalElements(),
+					users.getTotalPages())
 					,HttpStatus.OK);
 		}
 		
-		Page<User> users = userService.findAll(page,size);
-		return new ResponseEntity<>(new PageDTO<User>(
+		List<User> test = userService.findAll();
+		List<UserPermissionAsignedDTO> Content = new ArrayList<UserPermissionAsignedDTO>();
+		List<Permission> permission = permissionService.findAll();
+		for (User user : test) {
+			
+			List<PermissionVerificationDTO> ListPermission = new ArrayList<PermissionVerificationDTO>();
+			
+			for (Permission permissiondata : permission) {
+				List<UserXPermission> listOfPermissionOwner= user.getUserXpermission();
+				PermissionVerificationDTO data = new PermissionVerificationDTO();
+				
+				boolean flag = true;
+				
+				for (UserXPermission permission2 : listOfPermissionOwner) {
+						if(permissiondata.getCode() == permission2.getPermission().getCode()) {
+							data.setCode(permission2.getCode());
+							data.setPermission(permission2.getPermission());
+							data.setStatus(true);
+							ListPermission.add(data);
+							flag = false;
+						}
+				}
+				
+				if(flag) {
+					data.setCode(null);
+					data.setPermission(permissiondata);
+					data.setStatus(false);
+					ListPermission.add(data);
+				}
+
+			}
+			
+			
+			
+			
+			UserPermissionAsignedDTO userPermission = new UserPermissionAsignedDTO(
+					user.getCode(),
+					user.getName(),
+					user.getUsername(),
+					user.getEmail(),
+					user.getActive(),
+					ListPermission
+					);
+			Content.add(userPermission);
+		}
+		
+		Page<UserPermissionAsignedDTO> users = userService.getPaginatedUsers(Content, page, size);
+		
+		return new ResponseEntity<>(new PageDTO<UserPermissionAsignedDTO>(
 				users.getContent(),
 				users.getNumber(),
 				users.getSize(),

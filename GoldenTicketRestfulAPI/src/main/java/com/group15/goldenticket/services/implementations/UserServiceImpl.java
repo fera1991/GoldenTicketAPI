@@ -17,6 +17,7 @@ import com.group15.goldenticket.models.dtos.RegisterDTO;
 import com.group15.goldenticket.models.dtos.SaveUserDTO;
 import com.group15.goldenticket.models.dtos.ShowTicketDTO;
 import com.group15.goldenticket.models.dtos.UpdateUserDTO;
+import com.group15.goldenticket.models.dtos.UserPermissionAsignedDTO;
 import com.group15.goldenticket.models.entities.Event;
 import com.group15.goldenticket.models.entities.Token;
 import com.group15.goldenticket.models.entities.User;
@@ -133,9 +134,8 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public Page<User> findAllTitle(String fragment, int page, int size) {
-		Pageable pageable = PageRequest.of(page,size);
-		return userRepository.findByUsernameOrEmailContaining(fragment,fragment,pageable);
+	public List<User> findAllTitle(String fragment, int page, int size) {
+		return userRepository.findByUsernameOrEmailContaining(fragment,fragment);
 	}
 
 	@Override
@@ -207,6 +207,20 @@ public class UserServiceImpl implements UserService{
         
         return new PageImpl<>(sublist,pageRequest,list.size());
 	}
+	
+	@Override
+	public Page<UserPermissionAsignedDTO> getPaginatedUsers(List<UserPermissionAsignedDTO> list, int page, int size) {
+		int startIndex = page * size;
+        int endIndex = Math.min(startIndex + size, list.size());
+        
+        List<UserPermissionAsignedDTO> sublist = list.subList(startIndex, endIndex);
+        PageRequest pageRequest = PageRequest.of(page,size);
+        
+        return new PageImpl<>(sublist,pageRequest,list.size());
+	}
+	
+	
+	
 
 }
 	
