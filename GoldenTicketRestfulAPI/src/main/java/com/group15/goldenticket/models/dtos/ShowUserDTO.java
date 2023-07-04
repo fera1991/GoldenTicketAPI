@@ -10,6 +10,7 @@ import lombok.Data;
 public class ShowUserDTO {
 	
 	private UUID code;
+	private String name;
 	private String username;
 	private String email;
 }

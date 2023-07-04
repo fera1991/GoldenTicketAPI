@@ -76,6 +76,7 @@ public class UserController {
 		}
 		return new ResponseEntity<>(new ShowUserDTO(
 										user.getCode(),
+										user.getName(),
 										user.getUsername(),
 										user.getEmail()
 													),HttpStatus.OK);
