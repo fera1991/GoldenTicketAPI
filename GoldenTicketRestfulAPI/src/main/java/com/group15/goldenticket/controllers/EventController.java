@@ -229,7 +229,7 @@ public class EventController {
 	        Date date = format.parse(info.getDate());
 			eventService.update(event,info,category, date);
 			return new ResponseEntity<>(
-					new MessageDTO("Event Created"), HttpStatus.CREATED);
+					new MessageDTO("Event Updated"), HttpStatus.CREATED);
 		} catch (Exception e) {
 			 if (e instanceof ParseException) {
 			        return new ResponseEntity<>(new MessageDTO("Invalid date format"), HttpStatus.BAD_REQUEST);
