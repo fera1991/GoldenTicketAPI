@@ -35,14 +35,16 @@ public class Validation {
 	@Column(name = "validation_date")
 	private Date validationDate;
 	
-	@Column(name = "purchase_date")
+	@Column(name = "status")
 	private Boolean status;
+	
+	@Column(name = "hash")
+	private String hash;
 
-	public Validation(Ticket ticket, Date expirationDate, Date validationDate, Boolean status) {
+	public Validation(Ticket ticket, Date expirationDate, Boolean status) {
 		super();
 		this.ticket = ticket;
 		this.expirationDate = expirationDate;
-		this.validationDate = validationDate;
 		this.status = status;
 	}
 	

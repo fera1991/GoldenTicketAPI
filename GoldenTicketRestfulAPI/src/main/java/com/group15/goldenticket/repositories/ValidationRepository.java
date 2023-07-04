@@ -7,5 +7,5 @@ import org.springframework.data.repository.ListCrudRepository;
 import com.group15.goldenticket.models.entities.Validation;
 
 public interface  ValidationRepository extends ListCrudRepository<Validation,UUID>{
-
+	public Validation findByHash(String hash);
 }
