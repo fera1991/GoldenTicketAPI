@@ -255,7 +255,7 @@ public class UserController {
 		for (Ticket data : user.getTickets()) {
 			ShowTicketDTO ticket = new ShowTicketDTO(
 					data.getCode(),
-					new ShowUserDTO(data.getUser().getCode(),data.getUser().getUsername(),data.getUser().getEmail()),
+					new ShowUserDTO(data.getUser().getCode(),data.getUser().getName(),data.getUser().getUsername(),data.getUser().getEmail()),
 					data.getLocality(),
 					data.getPurchaseDate()
 					);
